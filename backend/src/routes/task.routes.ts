@@ -10,7 +10,7 @@
 
 const router = Router();
 
-// // Apply auth middleware to all task routes
+//  Apply auth middleware to all task routes
  router.use(authMiddleware);
 
  router.post("/", createTask);

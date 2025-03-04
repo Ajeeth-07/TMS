@@ -13,11 +13,12 @@ export const getTasks = async(req:Request, res:Response, next:NextFunction) => {
 
         res.json(tasks);
     }catch(err){
-        res.status(500).json({message:"Server error" + err})
+        console.error(err);
+        res.status(500).json({message:"Server error"});
     }
 }
 
-export const getTaskById = async(req:Request & {userId?:number}, res:Response, next:NextFunction) : Promise<void> => {
+export const getTaskById = async(req:Request, res:Response, next:NextFunction) : Promise<void> => {
 
     try{
         const task = await prisma.task.findUnique({
@@ -38,11 +39,12 @@ export const getTaskById = async(req:Request & {userId?:number}, res:Response, n
 
         res.json(task);
     }catch(err){
-        res.status(500).json({message:"Server error" + err});
+        console.error(err);
+        res.status(500).json({message:"Server error" });
     }
 };
 
-export const createTask = async(req:Request & {userId?:number}, res:Response) => {
+export const createTask = async(req:Request, res:Response) => {
     try{
         const {title, content,dueDate,priority} = req.body;
 
@@ -58,11 +60,12 @@ export const createTask = async(req:Request & {userId?:number}, res:Response) =>
 
         res.status(201).json(task)
     }catch(err){
-        res.status(500).json({message:"Server error" + err})
+        console.error(err);
+        res.status(500).json({message:"Server error"})
     }
 };
 
-export const updateTask = async(req:Request & {userId?:number}, res:Response,) : Promise<void> => {
+export const updateTask = async(req:Request, res:Response,) : Promise<void> => {
     try{ 
 
         const {title, content, completed, dueDate, priority} = req.body;
@@ -78,7 +81,7 @@ export const updateTask = async(req:Request & {userId?:number}, res:Response,) :
         }
 
         if(existingTask.authorId !== req.userId){
-             res.status(403).json("Not authorised");
+             res.status(403).json({message: "Not authorised"});
              return;
         }
 
@@ -96,11 +99,12 @@ export const updateTask = async(req:Request & {userId?:number}, res:Response,) :
         res.json(task);
 
     }catch(err){
-        res.status(500).json({message:"Server error" + err});
+        console.error(err);
+        res.status(500).json({message:"Server error"});
     }
 };
 
-export const deleteTask = async(req:Request & {userId?:number}, res:Response) : Promise<void> => {
+export const deleteTask = async(req:Request, res:Response) : Promise<void> => {
     try{
         //check if task exists and belongs to user
         const existingTask = await prisma.task.findUnique({
@@ -123,6 +127,7 @@ export const deleteTask = async(req:Request & {userId?:number}, res:Response) : 
 
         res.json({message:"task deleted"});
     }catch(err){
-        res.status(500).json({message:"Server error" + err})
+        console.error(err);
+        res.status(500).json({message:"Server error"})
     }
 }

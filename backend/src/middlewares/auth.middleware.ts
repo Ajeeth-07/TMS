@@ -1,5 +1,6 @@
-import {Request, Response, NextFunction} from "express";
+import {Request, Response, NextFunction, RequestHandler} from "express";
 import jwt from "jsonwebtoken";
+
 
 interface TokenPayload{
     id:number;
@@ -13,12 +14,13 @@ declare global{
     }
 }
 
-export const authMiddleware = (req: Request, res:Response, next:NextFunction) => {
+export const authMiddleware : RequestHandler = (req: Request, res:Response, next:NextFunction) => {
     try{
         const token = req.headers.authorization?.split(" ")[1];
 
         if(!token){
-            return res.status(401).json({message:"Authentication required"});
+             res.status(401).json({message:"Authentication required"});
+             return;
         }
 
         const decoded = jwt.verify(
@@ -29,6 +31,7 @@ export const authMiddleware = (req: Request, res:Response, next:NextFunction) =>
         req.userId = decoded.id;
         next();
     }catch(error){
+        console.error(error);
         res.status(401).json({message:"Invalid or expired token"});
     }
 };
