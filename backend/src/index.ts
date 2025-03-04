@@ -4,7 +4,7 @@ import authRoutes from "./routes/auth.routes"
 import { errorHandler } from "./middlewares/errorMiddleware";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import taskRoutes from "./routes/task.routes";
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/tasks", taskRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // Error handling
 app.use(errorHandler);
