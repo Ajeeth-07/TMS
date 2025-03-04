@@ -1,12 +1,9 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import authRoutes from "./routes/auth.routes"
+import { errorHandler } from "./middlewares/errorMiddleware";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.routes";
-import taskRoutes from "./routes/task.routes";
-import { errorHandler } from "./middleware/error.middleware";
 
 dotenv.config();
 
@@ -20,7 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/tasks", taskRoutes);
+// app.use("/api/tasks", taskRoutes);
 
 // Error handling
 app.use(errorHandler);
