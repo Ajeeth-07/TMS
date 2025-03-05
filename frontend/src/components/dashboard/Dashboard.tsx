@@ -1,15 +1,36 @@
 import { useNavigate } from "react-router-dom";
 import { Task } from "../../interfaces/tasks.types";
 import { useState } from "react";
+import AddTask from "../tasks/AddTask";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
     //TODO: logout logic to be implemented
     navigate("/login");
+  };
+
+  const handleAddTask = (taskData: {
+    title: string;
+    content: string;
+    priority: string;
+  }) => {
+    // Create a new task object
+    const newTask: Task = {
+      id: tasks.length + 1, // Temporary ID management - should come from backend
+      title: taskData.title,
+      content: taskData.content,
+      priority: taskData.priority as "low" | "medium" | "high",
+      completed: false,
+      authorId: 1, // This should come from authenticated user
+    };
+
+    // Update tasks state with the new task
+    setTasks([...tasks, newTask]);
   };
 
   return (
@@ -38,7 +59,10 @@ const Dashboard = () => {
               Manage your track and tasks
             </p>
           </div>
-          <button className="bg-indigo-600 px-4 py-2 text-white rounded-md hover:bg-indigo-700 cursor-pointer">
+          <button
+            onClick={() => setIsAddTaskOpen(true)}
+            className="bg-indigo-600 px-4 py-2 text-white rounded-md hover:bg-indigo-700"
+          >
             Add New Task
           </button>
         </div>
@@ -90,6 +114,11 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+        <AddTask
+          isOpen={isAddTaskOpen}
+          onClose={() => setIsAddTaskOpen(false)}
+          onAdd={handleAddTask}
+        />
       </main>
     </div>
   );
