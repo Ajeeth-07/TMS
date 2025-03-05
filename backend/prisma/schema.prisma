@@ -35,4 +35,10 @@ model Task {
   authorId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  //custom indices for frequently queried fields
+  @@index([authorId, completed])
+  @@index([authorId, priority])
+  @@index([authorId, dueDate])
+  @@index([updatedAt])
 }
