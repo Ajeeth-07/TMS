@@ -115,9 +115,13 @@ const Dashboard = () => {
         </div>
 
         <div className="mt-8">
-          {!tasks ? (
+          {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">Loading...</p>
+              <p className="text-gray-500">Loading tasks...</p>
+            </div>
+          ) : !Array.isArray(tasks) ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Error loading tasks</p>
             </div>
           ) : tasks.length === 0 ? (
             <div className="text-center py-12">
@@ -128,70 +132,69 @@ const Dashboard = () => {
           ) : (
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
               <ul className="divide-y divide-gray-200">
-                {Array.isArray(tasks) &&
-                  tasks.map((task) => (
-                    <li
-                      key={task.id}
-                      className={`px-6 py-4 hover:bg-gray-50 ${
-                        task.completed ? "bg-gray-50" : ""
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center">
-                            {task.completed && (
-                              <span className="mr-2 text-green-600 text-xl">
-                                ✓
-                              </span>
-                            )}
-                            <h3
-                              className={`text-lg font-medium ${
-                                task.completed
-                                  ? "line-through text-gray-500"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              {task.title}
-                            </h3>
-                          </div>
-                          <p
-                            className={`mt-1 text-sm ${
+                {tasks.map((task) => (
+                  <li
+                    key={task.id}
+                    className={`px-6 py-4 hover:bg-gray-50 ${
+                      task.completed ? "bg-gray-50" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          {task.completed && (
+                            <span className="mr-2 text-green-600 text-xl">
+                              ✓
+                            </span>
+                          )}
+                          <h3
+                            className={`text-lg font-medium ${
                               task.completed
-                                ? "line-through text-gray-400"
-                                : "text-gray-600"
+                                ? "line-through text-gray-500"
+                                : "text-gray-900"
                             }`}
                           >
-                            {task.content}
-                          </p>
+                            {task.title}
+                          </h3>
                         </div>
-                        <div className="flex space-x-4 items-center">
-                          <span
-                            className={`px-2 py-1 text-sm rounded-full ${
-                              task.priority === "high"
-                                ? "bg-red-100 text-red-800"
-                                : task.priority === "medium"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            {task.priority}
-                          </span>
-                          <button
-                            onClick={() => handleEditClick(task)}
-                            className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTask(task.id)}
-                            className="text-red-600 hover:text-red-900 cursor-pointer"
-                          >
-                            Delete
-                          </button>
-                        </div>
+                        <p
+                          className={`mt-1 text-sm ${
+                            task.completed
+                              ? "line-through text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {task.content}
+                        </p>
                       </div>
-                    </li>
-                  ))}
+                      <div className="flex space-x-4 items-center">
+                        <span
+                          className={`px-2 py-1 text-sm rounded-full ${
+                            task.priority === "high"
+                              ? "bg-red-100 text-red-800"
+                              : task.priority === "medium"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {task.priority}
+                        </span>
+                        <button
+                          onClick={() => handleEditClick(task)}
+                          className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="text-red-600 hover:text-red-900 cursor-pointer"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           )}
