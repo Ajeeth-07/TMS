@@ -1,24 +1,30 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../services/api";
 const Signup = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-
-  const handleSubmit = async(e: FormEvent) => {
+    const navigate = useNavigate();
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-  }
+    setError("");
 
-  try{
-    console.log('Signup attempt with:', {name,email,password});
-  }catch(err){
-    console.error(err);
-    setError('Registration failed')
-  }
+    try {
+      const response = await api.post("/auth/signup", {
+        name,
+        email,
+        password,
+      });
+      localStorage.setItem("token", response.data.token);
+      console.log("Signup attempt with:", { name, email, password });
+      navigate('/dashboard')
+    } catch (err) {
+      console.error(err);
+      setError("Registration failed");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

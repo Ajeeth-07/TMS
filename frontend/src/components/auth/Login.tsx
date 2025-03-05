@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate,   Link } from 'react-router-dom';
-
+import api from '../../services/api';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,7 +12,8 @@ const Login = () => {
     setError('');
 
     try {
-      // API call will be implemented later
+      const response = await api.post('auth/login', {email, password});
+      localStorage.setItem('token', response.data.token);
       console.log('Login attempt with:', { email, password });
     } catch (err) {
         console.error(err);

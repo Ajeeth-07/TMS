@@ -1,37 +1,68 @@
 import { useNavigate } from "react-router-dom";
 import { Task } from "../../interfaces/tasks.types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddTask from "../tasks/AddTask";
-
+import api from "../../services/api";
 const Dashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+const navigate = useNavigate();
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-  const navigate = useNavigate();
+  const fetchTasks = async () => {
+    try{
+        const response = await api.get("/tasks");
+        setTasks(response.data);
+    }catch(err){
+        console.error(err);
+        if((err as any).response?.status === 401){
+            navigate("/login");
+        }
+    }
+  }
 
-  const handleLogout = () => {
-    //TODO: logout logic to be implemented
-    navigate("/login");
-  };
-
-  const handleAddTask = (taskData: {
+  const handleAddTask = async(taskData: {
     title: string;
     content: string;
     priority: string;
   }) => {
     // Create a new task object
-    const newTask: Task = {
-      id: tasks.length + 1, // Temporary ID management - should come from backend
-      title: taskData.title,
-      content: taskData.content,
-      priority: taskData.priority as "low" | "medium" | "high",
-      completed: false,
-      authorId: 1, // This should come from authenticated user
-    };
-
-    // Update tasks state with the new task
-    setTasks([...tasks, newTask]);
+    try{
+        const response = await api.post("/tasks", taskData);
+        setTasks([...tasks, response.data])
+    }catch(err){
+        console.error(err);
+    }
   };
+
+  const handleDeleteTask = async(taskId:number) => {
+    try{
+        await api.delete(`/tasks/${taskId}`);
+        setTasks(tasks.filter(task => task.id !== taskId));
+    }catch(err){
+        console.error(err);
+    }
+  }
+
+  const handleUpdateTask = async (taskId:number, updatedData:Partial<Task>) => {
+    try{
+        const response = await api.put(`/tasks/${taskId}`, updatedData);
+        setTasks(tasks.map(task => task.id === taskId ? response.data : task));
+    }catch(err){
+        console.error(err)
+    }
+  }
+
+  
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate("/login");
+  };
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -103,7 +134,7 @@ const Dashboard = () => {
                         <button className="text-indigo-600 hover:text-indigo-900">
                           Edit
                         </button>
-                        <button className="text-indigo-600 hover:text-indigo-900">
+                        <button onClick={() => handleDeleteTask(task.id)} className="text-indigo-600 hover:text-indigo-900">
                           Delete
                         </button>
                       </div>
