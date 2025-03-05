@@ -30,7 +30,7 @@ A full-stack task management application built with React, TypeScript, Express, 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/TMS.git
+git clone https://github.com/Ajeeth-07/TMS.git
 cd TMS/backend
 ```
 
