@@ -18,7 +18,7 @@ const Dashboard = () => {
   const fetchTasks = async () => {
     try {
       const response = await api.get("/tasks");
-      setTasks(response.data);
+      setTasks(response.data.tasks || []);
     } catch (err) {
       console.error(err);
       if ((err as AxiosError).response?.status === 401) {
