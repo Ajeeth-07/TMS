@@ -15,10 +15,8 @@ services:
 
   - type: static
     name: tms-frontend
-    env : static
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
-    PublishPath: frontend/dist
+    publishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
         fromService:
