@@ -83,7 +83,7 @@ const Dashboard = () => {
           </h1>
           <button
             onClick={handleLogout}
-            className="text-white hover:text-gray-200"
+            className="text-white hover:text-gray-200 cursor-pointer"
           >
             Logout
           </button>
@@ -102,7 +102,7 @@ const Dashboard = () => {
           </div>
           <button
             onClick={() => setIsAddTaskOpen(true)}
-            className="bg-indigo-600 px-4 py-2 text-white rounded-md hover:bg-indigo-700"
+            className="bg-indigo-600 px-4 py-2 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
           >
             Add New Task
           </button>
@@ -167,13 +167,13 @@ const Dashboard = () => {
                         </span>
                         <button
                           onClick={() => handleEditClick(task)}
-                          className="text-indigo-600 hover:text-indigo-900"
+                          className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteTask(task.id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 cursor-pointer"
                         >
                           Delete
                         </button>
