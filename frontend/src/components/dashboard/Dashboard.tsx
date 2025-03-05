@@ -2,67 +2,77 @@ import { useNavigate } from "react-router-dom";
 import { Task } from "../../interfaces/tasks.types";
 import { useEffect, useState } from "react";
 import AddTask from "../tasks/AddTask";
+import EditTask from "../tasks/EditTask";
 import api from "../../services/api";
+import { AxiosError } from "axios";
 const Dashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
-const navigate = useNavigate();
+  const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
+  const navigate = useNavigate();
   useEffect(() => {
     fetchTasks();
   }, []);
 
   const fetchTasks = async () => {
-    try{
-        const response = await api.get("/tasks");
-        setTasks(response.data);
-    }catch(err){
-        console.error(err);
-        if((err as any).response?.status === 401){
-            navigate("/login");
-        }
+    try {
+      const response = await api.get("/tasks");
+      setTasks(response.data);
+    } catch (err) {
+      console.error(err);
+      if ((err as AxiosError).response?.status === 401) {
+        navigate("/login");
+      }
     }
-  }
+  };
 
-  const handleAddTask = async(taskData: {
+  const handleAddTask = async (taskData: {
     title: string;
     content: string;
     priority: string;
   }) => {
     // Create a new task object
-    try{
-        const response = await api.post("/tasks", taskData);
-        setTasks([...tasks, response.data])
-    }catch(err){
-        console.error(err);
+    try {
+      const response = await api.post("/tasks", taskData);
+      setTasks([...tasks, response.data]);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const handleDeleteTask = async(taskId:number) => {
-    try{
-        await api.delete(`/tasks/${taskId}`);
-        setTasks(tasks.filter(task => task.id !== taskId));
-    }catch(err){
-        console.error(err);
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      await api.delete(`/tasks/${taskId}`);
+      setTasks(tasks.filter((task) => task.id !== taskId));
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
-  const handleUpdateTask = async (taskId:number, updatedData:Partial<Task>) => {
-    try{
-        const response = await api.put(`/tasks/${taskId}`, updatedData);
-        setTasks(tasks.map(task => task.id === taskId ? response.data : task));
-    }catch(err){
-        console.error(err)
+  const handleUpdateTask = async (
+    taskId: number,
+    updatedData: Partial<Task>
+  ) => {
+    try {
+      const response = await api.put(`/tasks/${taskId}`, updatedData);
+      setTasks(
+        tasks.map((task) => (task.id === taskId ? response.data : task))
+      );
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
-  
+  const handleEditClick = (task: Task) => {
+    setCurrentTask(task);
+    setIsEditTaskOpen(true);
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     navigate("/login");
   };
-
-  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -109,13 +119,37 @@ const navigate = useNavigate();
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
               <ul className="divide-y divide-gray-200">
                 {tasks.map((task) => (
-                  <li key={task.id} className="px-6 py-4 hover:bg-gray-50">
+                  <li
+                    key={task.id}
+                    className={`px-6 py-4 hover:bg-gray-50 ${
+                      task.completed ? "bg-gray-50" : ""
+                    }`}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          {task.title}
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-600">
+                        <div className="flex items-center">
+                          {task.completed && (
+                            <span className="mr-2 text-green-600 text-xl">
+                              ✓
+                            </span>
+                          )}
+                          <h3
+                            className={`text-lg font-medium ${
+                              task.completed
+                                ? "line-through text-gray-500"
+                                : "text-gray-900"
+                            }`}
+                          >
+                            {task.title}
+                          </h3>
+                        </div>
+                        <p
+                          className={`mt-1 text-sm ${
+                            task.completed
+                              ? "line-through text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
                           {task.content}
                         </p>
                       </div>
@@ -131,10 +165,16 @@ const navigate = useNavigate();
                         >
                           {task.priority}
                         </span>
-                        <button className="text-indigo-600 hover:text-indigo-900">
+                        <button
+                          onClick={() => handleEditClick(task)}
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
                           Edit
                         </button>
-                        <button onClick={() => handleDeleteTask(task.id)} className="text-indigo-600 hover:text-indigo-900">
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
                           Delete
                         </button>
                       </div>
@@ -149,6 +189,12 @@ const navigate = useNavigate();
           isOpen={isAddTaskOpen}
           onClose={() => setIsAddTaskOpen(false)}
           onAdd={handleAddTask}
+        />
+        <EditTask
+          isOpen={isEditTaskOpen}
+          onClose={() => setIsEditTaskOpen(false)}
+          onUpdate={handleUpdateTask}
+          task={currentTask}
         />
       </main>
     </div>

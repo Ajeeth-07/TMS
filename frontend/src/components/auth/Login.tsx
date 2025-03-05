@@ -15,6 +15,7 @@ const Login = () => {
       const response = await api.post('auth/login', {email, password});
       localStorage.setItem('token', response.data.token);
       console.log('Login attempt with:', { email, password });
+      navigate('/dashboard')
     } catch (err) {
         console.error(err);
       setError('Invalid credentials');
